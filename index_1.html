@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICCA Admit — Bed Assignment Prototype</title>
+<style>
+  :root{
+    --ink:#132029;
+    --ink-soft:#4d6470;
+    --paper:#f4f7f7;
+    --card:#ffffff;
+    --line:#dde3e4;
+    --teal:#0f6e56;
+    --teal-100:#e1f5ee;
+    --teal-600:#0f6e56;
+    --coral:#993c1d;
+    --coral-100:#faece7;
+    --amber:#854f0b;
+    --amber-100:#faeeda;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .topbar{
+    background:var(--ink);
+    color:#fff;
+    padding:14px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:15px;
+    letter-spacing:0.3px;
+  }
+  .topbar .brand .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--teal);
+  }
+  .topbar .badge{
+    font-size:11px;
+    color:#b9c6cc;
+    border:1px solid #33454e;
+    padding:3px 10px;
+    border-radius:20px;
+  }
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:28px 24px 60px;
+  }
+  .header{
+    margin-bottom:22px;
+  }
+  .header h1{
+    font-size:22px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .header p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+  @media (max-width:800px){
+    .grid{grid-template-columns:1fr;}
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+  }
+  .card h2{
+    font-size:14px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .card .sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+    margin-top:14px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text], select{
+    width:100%;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-size:14px;
+    font-family:inherit;
+    background:#fbfcfc;
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--teal);
+    box-shadow:0 0 0 3px var(--teal-100);
+  }
+  .step-note{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    background:var(--teal-100);
+    color:var(--teal-600);
+    font-size:12px;
+    padding:10px 12px;
+    border-radius:8px;
+    margin-top:18px;
+    line-height:1.5;
+  }
+  .ward-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:16px;
+  }
+  .legend{
+    display:flex;
+    gap:14px;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+  .bedgrid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+  }
+  .bed{
+    border-radius:9px;
+    padding:14px 10px 12px;
+    text-align:left;
+    cursor:pointer;
+    border:1.5px solid transparent;
+    background:var(--teal-100);
+    color:var(--teal-600);
+    transition:transform .08s ease;
+    position:relative;
+  }
+  .bed:hover{transform:translateY(-1px);}
+  .bed.occupied{
+    background:var(--coral-100);
+    color:var(--coral);
+    cursor:not-allowed;
+    opacity:.85;
+  }
+  .bed.occupied:hover{transform:none;}
+  .bed.cleaning{
+    background:var(--amber-100);
+    color:var(--amber);
+    cursor:not-allowed;
+    opacity:.85;
+  }
+  .bed.cleaning:hover{transform:none;}
+  .bed.selected{
+    border-color:var(--teal);
+    box-shadow:0 0 0 3px var(--teal-100);
+  }
+  .bed .id{
+    font-size:15px;
+    font-weight:600;
+    display:block;
+    margin-bottom:3px;
+  }
+  .bed .status{
+    font-size:11px;
+    display:block;
+  }
+  .bed .patient{
+    font-size:11px;
+    margin-top:6px;
+    display:block;
+    opacity:.85;
+  }
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:20px;
+    gap:10px;
+  }
+  button{
+    font-family:inherit;
+    font-size:13px;
+    padding:10px 18px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+  }
+  button.primary{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+  button.primary:disabled{
+    background:#c7ced0;
+    border-color:#c7ced0;
+    cursor:not-allowed;
+  }
+  button:not(.primary):hover{background:#f1f3f3;}
+  .toast{
+    position:fixed;
+    bottom:26px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:#fff;
+    padding:13px 20px;
+    border-radius:9px;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    opacity:0;
+    pointer-events:none;
+    transition:all .25s ease;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+    pointer-events:auto;
+  }
+  .toast .check{
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--teal);
+    flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;
+  }
+  .log{
+    margin-top:20px;
+  }
+  .log h3{
+    font-size:12px;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin:0 0 8px;
+    text-transform:none;
+  }
+  .log-item{
+    font-size:12px;
+    color:var(--ink-soft);
+    padding:8px 0;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+  }
+  .log-item:first-child{border-top:none;}
+  .footnote{
+    margin-top:28px;
+    font-size:11.5px;
+    color:#8b9aa1;
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> ICCA — Critical Care Simulation</div>
+  <div class="badge">Prototype · ไม่เชื่อมต่อระบบจริง</div>
+</div>
+
+<div class="wrap">
+  <div class="header">
+    <h1>รับผู้ป่วยเข้าสู่ระบบ (Admit)</h1>
+    <p>เวอร์ชันปรับปรุง — เลือกเตียงจากผังหอผู้ป่วยแทนการพิมพ์รหัสเตียง</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>ข้อมูลผู้ป่วย</h2>
+      <p class="sub">ข้อมูลนี้จะถูกส่งมาจากระบบ HIS โดยอัตโนมัติผ่าน HL7 (ADT)</p>
+
+      <label>HN (Hospital Number)</label>
+      <input type="text" id="hn" value="HN-88231" readonly>
+
+      <label>ชื่อ-นามสกุล</label>
+      <input type="text" id="pname" value="สมชาย ใจดี" readonly>
+
+      <label>เพศ / วันเกิด</label>
+      <input type="text" id="pmeta" value="ชาย · 14/03/2501" readonly>
+
+      <label>วอร์ด</label>
+      <select id="ward">
+        <option>38ICU — หอผู้ป่วยวิกฤต</option>
+      </select>
+
+      <div class="step-note">
+        <span>①</span>
+        <span>ขั้นตอนถัดไป — เลือกเตียงว่างจากผังด้านขวา แล้วกด "ยืนยันการรับเข้า"</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ward-header">
+        <div>
+          <h2>ผังเตียง — 38ICU</h2>
+          <p class="sub">8 เตียง · แตะที่เตียงว่างเพื่อเลือก</p>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--teal-100);border:1px solid var(--teal)"></i>ว่าง</span>
+          <span><i style="background:var(--amber-100);border:1px solid var(--amber)"></i>ทำความสะอาด</span>
+          <span><i style="background:var(--coral-100);border:1px solid var(--coral)"></i>มีผู้ป่วย</span>
+        </div>
+      </div>
+
+      <div class="bedgrid" id="bedgrid"></div>
+
+      <div class="actions">
+        <button id="cancelBtn">ยกเลิก</button>
+        <button id="confirmBtn" class="primary" disabled>ยืนยันการรับเข้า</button>
+      </div>
+
+      <div class="log">
+        <h3>ประวัติการทำงาน (Log)</h3>
+        <div id="logList"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footnote">
+    Prototype นี้จำลองการทำงานฝั่ง Client เท่านั้น ข้อมูลทั้งหมดอยู่ใน Memory ของเบราว์เซอร์
+    ไม่มีการเชื่อมต่อกับระบบ ICCA จริง จัดทำเพื่อประกอบ Mini Project บทที่ 10 — Independent Study (UX)
+  </p>
+</div>
+
+<div class="toast" id="toast">
+  <span class="check">✓</span>
+  <span id="toastText"></span>
+</div>
+
+<script>
+const beds = [
+  {id:"ICU1", status:"occupied", patient:"อรุณ พงษ์เจริญ"},
+  {id:"ICU2", status:"occupied", patient:"วิภา สุขใจ"},
+  {id:"ICU3", status:"vacant"},
+  {id:"ICU4", status:"vacant"},
+  {id:"ICU5", status:"cleaning"},
+  {id:"ICU6", status:"vacant"},
+  {id:"ICU7", status:"occupied", patient:"ประยุทธ์ ทองดี"},
+  {id:"ICU8", status:"vacant"},
+];
+
+const grid = document.getElementById('bedgrid');
+const confirmBtn = document.getElementById('confirmBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const logList = document.getElementById('logList');
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+
+let selectedBed = null;
+
+function statusLabel(s){
+  if(s==="occupied") return "มีผู้ป่วย";
+  if(s==="cleaning") return "กำลังทำความสะอาด";
+  return "ว่าง";
+}
+
+function render(){
+  grid.innerHTML = "";
+  beds.forEach(b=>{
+    const el = document.createElement('button');
+    el.className = "bed " + b.status + (selectedBed===b.id ? " selected" : "");
+    el.innerHTML = `<span class="id">${b.id}</span><span class="status">${statusLabel(b.status)}</span>` +
+                    (b.patient ? `<span class="patient">${b.patient}</span>` : "");
+    if(b.status === "vacant"){
+      el.onclick = () => {
+        selectedBed = b.id;
+        render();
+        confirmBtn.disabled = false;
+      };
+    }
+    grid.appendChild(el);
+  });
+}
+
+function addLog(text){
+  const time = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  const item = document.createElement('div');
+  item.className = "log-item";
+  item.innerHTML = `<span>${text}</span><span>${time}</span>`;
+  logList.prepend(item);
+}
+
+function showToast(text){
+  toastText.textContent = text;
+  toast.classList.add('show');
+  setTimeout(()=> toast.classList.remove('show'), 2600);
+}
+
+confirmBtn.onclick = () => {
+  if(!selectedBed) return;
+  const bed = beds.find(b=>b.id===selectedBed);
+  bed.status = "occupied";
+  bed.patient = document.getElementById('pname').value;
+  addLog(`Assign เตียง ${selectedBed} ให้ ${bed.patient} สำเร็จ`);
+  showToast(`รับเข้าเตียง ${selectedBed} เรียบร้อยแล้ว`);
+  selectedBed = null;
+  confirmBtn.disabled = true;
+  render();
+};
+
+cancelBtn.onclick = () => {
+  selectedBed = null;
+  confirmBtn.disabled = true;
+  render();
+};
+
+addLog("เปิดหน้าจอ Admit สำหรับผู้ป่วย HN-88231");
+render();
+</script>
+
+</body>
+</html>
