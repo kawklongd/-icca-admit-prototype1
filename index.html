@@ -224,10 +224,16 @@
       <div class="card">
         <h2>ข้อมูลผู้ป่วย</h2>
         <p class="sub">ข้อมูลนี้จำลองว่าถูกส่งมาจาก HIS ผ่าน HL7 (ADT)</p>
+        <label>ผู้ป่วยที่รอ Admit (จำลองคิวจาก HIS)</label>
+        <select id="admit-queue"></select>
         <label>HN (Hospital Number)</label>
-        <input type="text" id="admit-hn" value="HN-90144" readonly>
+        <input type="text" id="admit-hn" readonly>
         <label>ชื่อ-นามสกุล</label>
-        <input type="text" id="admit-name" value="กมล แสงทอง" readonly>
+        <input type="text" id="admit-name" readonly>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:6px;">
+          * ข้อมูลผู้ป่วยถูกส่งมาจาก HIS ผ่าน HL7 (ADT) โดยอัตโนมัติ แก้ไขไม่ได้ในระบบจริง
+          รายการด้านบนจำลองคิวผู้ป่วยที่รอ Admit หลายคนพร้อมกัน
+        </div>
         <label>วอร์ด</label>
         <select><option>38ICU — หอผู้ป่วยวิกฤต</option></select>
       </div>
@@ -358,6 +364,32 @@ document.querySelectorAll('.tab').forEach(t=>{
 });
 
 /* ================= ADMIT ================= */
+const patientQueue = [
+  {hn:"HN-90144", name:"กมล แสงทอง"},
+  {hn:"HN-90218", name:"สมหญิง ใจงาม"},
+  {hn:"HN-90266", name:"ธนากร ศรีสุข"},
+  {hn:"HN-90301", name:"พิมพ์ใจ รุ่งเรือง"},
+];
+function renderAdmitQueue(){
+  const sel = document.getElementById('admit-queue');
+  sel.innerHTML = "";
+  patientQueue.forEach((p, idx)=>{
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `${p.hn} — ${p.name}`;
+    sel.appendChild(opt);
+  });
+  updateAdmitFields();
+}
+function updateAdmitFields(){
+  const sel = document.getElementById('admit-queue');
+  const p = patientQueue[Number(sel.value)];
+  if(!p) return;
+  document.getElementById('admit-hn').value = p.hn;
+  document.getElementById('admit-name').value = p.name;
+}
+document.getElementById('admit-queue').onchange = updateAdmitFields;
+
 let admitSelected = null;
 function renderAdmit(){
   const grid = document.getElementById('admit-bedgrid');
@@ -388,6 +420,12 @@ document.getElementById('admit-confirm').onclick = () => {
   showToast(`รับเข้าเตียง ${admitSelected} เรียบร้อยแล้ว`);
   admitSelected = null;
   document.getElementById('admit-confirm').disabled = true;
+  const idx = Number(document.getElementById('admit-queue').value);
+  patientQueue.splice(idx, 1);
+  if(patientQueue.length === 0){
+    patientQueue.push({hn:"HN-90144", name:"กมล แสงทอง"});
+  }
+  renderAdmitQueue();
   renderAll();
 };
 document.getElementById('admit-cancel').onclick = () => {
@@ -569,7 +607,8 @@ function renderAll(){
   renderTransfer();
   renderDischarge();
 }
-addLog('admit-log', "เปิดหน้าจอ Admit สำหรับผู้ป่วย HN-90144");
+renderAdmitQueue();
+addLog('admit-log', "เปิดหน้าจอ Admit — มีผู้ป่วยรอในคิว 4 ราย");
 renderAll();
 </script>
 
