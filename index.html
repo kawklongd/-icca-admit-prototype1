@@ -92,7 +92,7 @@
   .header{margin-bottom:18px;}
   .header h1{font-size:19px;font-weight:600;margin:0 0 4px;}
   .header p{margin:0;color:var(--ink-soft);font-size:13px;}
- 
+
   .grid2{
     display:grid;
     grid-template-columns:300px 1fr;
@@ -100,7 +100,7 @@
     align-items:start;
   }
   @media (max-width:760px){.grid2{grid-template-columns:1fr;}}
- 
+
   .card{
     background:#fbfcfc;
     border:1px solid var(--line);
@@ -109,18 +109,18 @@
   }
   .card h2{font-size:13px;font-weight:600;margin:0 0 4px;}
   .card .sub{font-size:12px;color:var(--ink-soft);margin:0 0 14px;}
- 
+
   label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;margin-top:12px;}
   label:first-of-type{margin-top:0;}
   input[type=text], select{
     width:100%;padding:9px 11px;border:1px solid var(--line);
     border-radius:7px;font-size:14px;font-family:inherit;background:#fff;
   }
- 
+
   .legend{display:flex;gap:12px;font-size:11px;color:var(--ink-soft);flex-wrap:wrap;}
   .legend span{display:flex;align-items:center;gap:5px;}
   .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
- 
+
   .bedgrid{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
@@ -134,20 +134,19 @@
     font-family:inherit;
   }
   .bed.occupied{background:var(--coral-100);color:var(--coral);}
-  .bed.cleaning{background:var(--amber-100);color:var(--amber);}
   .bed[disabled]{cursor:not-allowed;opacity:.55;}
   .bed.selected{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-100);}
   .bed .id{font-size:14px;font-weight:600;display:block;margin-bottom:2px;}
   .bed .status{font-size:10.5px;display:block;}
   .bed .patient{font-size:10.5px;margin-top:5px;display:block;opacity:.85;}
- 
+
   .flowline{
     display:flex;align-items:center;gap:10px;
     background:var(--blue-100);color:var(--blue);
     font-size:12.5px;padding:10px 14px;border-radius:8px;margin:16px 0;
   }
   .flowline .arrow{font-size:16px;}
- 
+
   .actions{display:flex;justify-content:flex-end;margin-top:18px;gap:10px;}
   button.btn{
     font-family:inherit;font-size:13px;padding:10px 18px;border-radius:8px;
@@ -157,7 +156,7 @@
   button.btn.danger{background:var(--coral);color:#fff;border-color:var(--coral);}
   button.btn:disabled{background:#c7ced0;border-color:#c7ced0;color:#fff;cursor:not-allowed;}
   button.btn:not(:disabled):not(.primary):not(.danger):hover{background:#f1f3f3;}
- 
+
   .steps{margin-top:16px;}
   .step{
     display:flex;align-items:center;gap:10px;
@@ -173,7 +172,7 @@
   .step.done .dot{background:var(--teal);border-color:var(--teal);color:#fff;}
   .step.done{color:var(--ink);}
   .step.active .dot{border-color:var(--blue);}
- 
+
   .log{margin-top:22px;}
   .log h3{font-size:12px;color:var(--ink-soft);font-weight:600;margin:0 0 8px;}
   .log-item{
@@ -181,7 +180,7 @@
     border-top:1px solid var(--line);display:flex;justify-content:space-between;
   }
   .log-item:first-child{border-top:none;}
- 
+
   .toast{
     position:fixed;bottom:26px;left:50%;
     transform:translateX(-50%) translateY(20px);
@@ -197,7 +196,7 @@
   }
   .empty{font-size:12.5px;color:var(--ink-soft);padding:20px 4px;}
   .footnote{margin-top:24px;font-size:11.5px;color:#8b9aa1;line-height:1.6;}
- 
+
   .barrow{margin-bottom:14px;}
   .barrow .barlabel{
     display:flex;justify-content:space-between;
@@ -207,9 +206,10 @@
     height:10px;background:#eef1f1;border-radius:6px;
     display:flex;overflow:hidden;
   }
-  .barfill.admit{background:var(--teal);height:100%;}
-  .barfill.discharge{background:var(--coral);height:100%;}
- 
+  .barfill{height:100%;border-radius:6px;}
+  .barfill.admit{background:var(--teal);}
+  .barfill.discharge{background:var(--coral);}
+
   .his-box{
     width:56px;height:56px;margin:0 auto 4px;border-radius:10px;
     background:#eef1f1;border:1.5px solid var(--line);
@@ -227,47 +227,26 @@
     transition:color .35s ease;
   }
   .his-arrow.lit{color:var(--teal);}
- 
-  .hl7box{
-    background:#0d1420;color:#8fd6c4;
-    font-family:"Consolas","Courier New",monospace;
-    font-size:11.5px;line-height:1.6;
-    padding:14px 16px;border-radius:9px;
-    white-space:pre-wrap;word-break:break-all;
-    margin-top:8px;
-  }
-  .hl7box .placeholder{color:#5a6b78;}
-  .porttag{
-    display:inline-flex;align-items:center;gap:5px;
-    background:var(--blue-100);color:var(--blue);
-    font-size:11px;padding:3px 10px;border-radius:20px;
-    margin-top:8px;
-  }
-  .techcard{
-    background:#fff8ee;border:1px solid #f0d9b5;border-radius:9px;
-    padding:16px 18px;margin-top:18px;
-  }
-  .techcard h2{color:#854f0b;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
- 
+
 <div class="topbar">
   <div class="brand"><span class="dot"></span> ICCA — Critical Care Simulation</div>
   <div class="badge">Prototype · ไม่เชื่อมต่อระบบจริง</div>
 </div>
- 
+
 <div class="tabbar">
   <button class="tab active" data-tab="admit">รับเข้า (Admit)</button>
   <button class="tab" data-tab="transfer">ย้ายเตียง (Transfer)</button>
   <button class="tab" data-tab="discharge">จำหน่าย (Discharge)</button>
   <button class="tab" data-tab="dashboard">สถิติ (Dashboard)</button>
 </div>
- 
+
 <div class="wrap">
- 
+
   <!-- ADMIT PANEL -->
   <div class="panel" id="panel-admit">
     <div class="header">
@@ -278,7 +257,7 @@
       <div class="card">
         <h2>ข้อมูลผู้ป่วย</h2>
         <p class="sub">ข้อมูลนี้จำลองว่าถูกส่งมาจาก HIS ผ่าน HL7 (ADT)</p>
- 
+
         <div id="his-flow" style="display:flex;align-items:center;justify-content:space-between;background:#fbfcfc;border:1px solid var(--line);border-radius:9px;padding:12px 10px;margin-bottom:6px;">
           <div class="his-node" id="node-his" style="text-align:center;flex:1;">
             <div class="his-box">HIS</div>
@@ -298,13 +277,25 @@
         <button class="btn" id="his-simulate" style="width:100%;font-size:12.5px;margin-bottom:14px;">
           📨 จำลองผู้ป่วยใหม่ส่งมาจาก HIS (HL7 ADT)
         </button>
- 
+
         <label>ผู้ป่วยที่รอ Admit (จำลองคิวจาก HIS)</label>
         <select id="admit-queue"></select>
         <label>HN (Hospital Number)</label>
         <input type="text" id="admit-hn" readonly>
         <label>ชื่อ-นามสกุล</label>
         <input type="text" id="admit-name" readonly>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label>เพศ</label>
+            <input type="text" id="admit-gender" readonly>
+          </div>
+          <div>
+            <label>อายุ</label>
+            <input type="text" id="admit-age" readonly>
+          </div>
+        </div>
+        <label>การวินิจฉัย (Diagnosis)</label>
+        <input type="text" id="admit-diagnosis" readonly>
         <div style="font-size:11px;color:var(--ink-soft);margin-top:6px;">
           * ข้อมูลผู้ป่วยถูกส่งมาจาก HIS ผ่าน HL7 (ADT) โดยอัตโนมัติ แก้ไขไม่ได้ในระบบจริง
           รายการด้านบนจำลองคิวผู้ป่วยที่รอ Admit หลายคนพร้อมกัน
@@ -320,7 +311,6 @@
           </div>
           <div class="legend">
             <span><i style="background:var(--teal-100);border:1px solid var(--teal)"></i>ว่าง</span>
-            <span><i style="background:var(--amber-100);border:1px solid var(--amber)"></i>ทำความสะอาด</span>
             <span><i style="background:var(--coral-100);border:1px solid var(--coral)"></i>มีผู้ป่วย</span>
           </div>
         </div>
@@ -332,25 +322,8 @@
       </div>
     </div>
     <div class="log"><h3>ประวัติการทำงาน (Log)</h3><div id="admit-log"></div></div>
- 
-    <div class="card" style="background:#fff;margin-top:18px;">
-      <h2>ข้อความ HL7 ที่ระบบส่งจริง (จำลอง)</h2>
-      <p class="sub" style="margin-bottom:4px;">แสดงข้อความล่าสุดหลังกดยืนยันการรับเข้า</p>
-      <div class="hl7box" id="admit-hl7"><span class="placeholder">รอการ Admit — ยังไม่มีข้อความ HL7 ที่ส่ง</span></div>
-      <div class="porttag" id="admit-port" style="display:none;"></div>
-    </div>
- 
-    <div class="techcard">
-      <h2 style="font-size:13px;font-weight:600;margin:0 0 4px;">🧪 ทดสอบเชิงเทคนิค: Race Condition</h2>
-      <p class="sub" style="margin:0 0 10px;">
-        จำลองสถานการณ์พยาบาล 2 คนกด Assign เตียงเดียวกันพร้อมกันจากคนละเครื่อง — ระบบต้องมีกลไก Database Locking
-        ป้องกันข้อมูลชนกัน (อ้างอิงพอร์ต TCP 1433 SQL Server ตามรายงานบทที่ 4.3)
-      </p>
-      <button class="btn" id="race-simulate" style="font-size:12.5px;">เริ่มทดสอบ Race Condition</button>
-      <div class="log" style="margin-top:12px;"><div id="race-log"></div></div>
-    </div>
   </div>
- 
+
   <!-- TRANSFER PANEL -->
   <div class="panel hidden" id="panel-transfer">
     <div class="header">
@@ -377,15 +350,8 @@
       </div>
     </div>
     <div class="log"><h3>ประวัติการทำงาน (Log)</h3><div id="transfer-log"></div></div>
- 
-    <div class="card" style="background:#fff;margin-top:18px;">
-      <h2>ข้อความ HL7 ที่ระบบส่งจริง (จำลอง)</h2>
-      <p class="sub" style="margin-bottom:4px;">แสดงข้อความล่าสุดหลังกดยืนยันการย้ายเตียง</p>
-      <div class="hl7box" id="transfer-hl7"><span class="placeholder">รอการย้ายเตียง — ยังไม่มีข้อความ HL7 ที่ส่ง</span></div>
-      <div class="porttag" id="transfer-port" style="display:none;"></div>
-    </div>
   </div>
- 
+
   <!-- DISCHARGE PANEL -->
   <div class="panel hidden" id="panel-discharge">
     <div class="header">
@@ -409,28 +375,21 @@
       </div>
     </div>
     <div class="log"><h3>ประวัติการทำงาน (Log)</h3><div id="discharge-log"></div></div>
- 
-    <div class="card" style="background:#fff;margin-top:18px;">
-      <h2>ข้อความ HL7 ที่ระบบส่งจริง (จำลอง)</h2>
-      <p class="sub" style="margin-bottom:4px;">แสดงข้อความล่าสุดหลังการ Export ข้อมูลไปยัง EMR สำเร็จ</p>
-      <div class="hl7box" id="discharge-hl7"><span class="placeholder">รอการจำหน่ายผู้ป่วย — ยังไม่มีข้อความ HL7 ที่ส่ง</span></div>
-      <div class="porttag" id="discharge-port" style="display:none;"></div>
-    </div>
   </div>
- 
+
   <!-- DASHBOARD PANEL -->
   <div class="panel hidden" id="panel-dashboard">
     <div class="header">
       <h1>สถิติผู้ป่วย (Dashboard)</h1>
       <p>สรุปจำนวนการ Admit / Discharge รายวัน</p>
     </div>
- 
+
     <div style="display:flex;gap:6px;margin-bottom:18px;">
       <button class="btn primary" id="dash-mode-real" style="font-size:12.5px;padding:8px 14px;">ข้อมูลจริง (Real Usage)</button>
       <button class="btn" id="dash-mode-mock" style="font-size:12.5px;padding:8px 14px;">ข้อมูลจำลอง (Demo)</button>
     </div>
     <div class="flowline" id="dash-mode-note" style="margin:0 0 18px;"></div>
- 
+
     <div class="grid2" style="grid-template-columns:1fr 1fr;">
       <div class="card" style="background:#fff;">
         <h2>วันนี้</h2>
@@ -461,11 +420,28 @@
         </div>
       </div>
     </div>
- 
+
     <h2 style="font-size:13px;font-weight:600;margin:22px 0 4px;">สถิติรายวัน (ล่าสุด 5 วันที่มีข้อมูล)</h2>
     <p class="sub" style="margin:0 0 12px;">แท่งสีเขียว = Admit · แท่งสีส้ม = Discharge</p>
     <div id="dash-chart"></div>
- 
+
+    <h2 style="font-size:13px;font-weight:600;margin:26px 0 4px;">ข้อมูลประชากรผู้ป่วย (Demographics)</h2>
+    <p class="sub" id="dash-demo-total" style="margin:0 0 14px;">จากข้อมูลผู้ป่วยที่ Admit แล้วทั้งหมด 0 คน</p>
+
+    <div class="grid2" style="grid-template-columns:1fr 1fr;">
+      <div>
+        <p class="sub" style="margin:0 0 6px;font-weight:600;color:var(--ink);">สัดส่วนเพศ</p>
+        <div id="dash-gender"></div>
+      </div>
+      <div>
+        <p class="sub" style="margin:0 0 6px;font-weight:600;color:var(--ink);">สัดส่วนช่วงอายุ</p>
+        <div id="dash-agegroup"></div>
+      </div>
+    </div>
+
+    <p class="sub" style="margin:18px 0 6px;font-weight:600;color:var(--ink);">การวินิจฉัยที่พบ</p>
+    <div id="dash-diagnosis"></div>
+
     <div class="actions" style="justify-content:space-between;align-items:center;">
       <span style="font-size:11.5px;color:#8b9aa1;">ข้อมูลจริง Sync ผ่าน Firebase ทุกอุปกรณ์ · ข้อมูลจำลองไว้สาธิต Concept เท่านั้น</span>
       <div style="display:flex;gap:8px;">
@@ -474,31 +450,30 @@
       </div>
     </div>
   </div>
- 
+
   <p class="footnote">
     Prototype นี้จำลองการทำงานฝั่ง Client เท่านั้น ข้อมูลทั้งหมดอยู่ใน Memory ของเบราว์เซอร์ ไม่มีการเชื่อมต่อกับระบบ ICCA จริง
     จัดทำเพื่อประกอบ Mini Project บทที่ 10 — Independent Study (UX): Admit, Transfer, Discharge
   </p>
 </div>
- 
+
 <div class="toast" id="toast"><span class="check">✓</span><span id="toastText"></span></div>
- 
+
 <script>
 /* ---------- shared state ---------- */
 const beds = [
-  {id:"ICU1", status:"occupied", patient:"อรุณ พงษ์เจริญ", hn:"HN-88112"},
-  {id:"ICU2", status:"occupied", patient:"วิภา สุขใจ", hn:"HN-88190"},
+  {id:"ICU1", status:"occupied", patient:"อรุณ พงษ์เจริญ", hn:"HN-88112", age:72, gender:"M", diagnosis:"Pneumonia (ปอดอักเสบ)"},
+  {id:"ICU2", status:"occupied", patient:"วิภา สุขใจ", hn:"HN-88190", age:58, gender:"F", diagnosis:"Sepsis (ภาวะติดเชื้อในกระแสเลือด)"},
   {id:"ICU3", status:"vacant"},
   {id:"ICU4", status:"vacant"},
-  {id:"ICU5", status:"cleaning"},
+  {id:"ICU5", status:"vacant"},
   {id:"ICU6", status:"vacant"},
-  {id:"ICU7", status:"occupied", patient:"ประยุทธ์ ทองดี", hn:"HN-88203"},
+  {id:"ICU7", status:"occupied", patient:"ประยุทธ์ ทองดี", hn:"HN-88203", age:64, gender:"M", diagnosis:"Post-Surgery (หลังผ่าตัดใหญ่)"},
   {id:"ICU8", status:"vacant"},
 ];
- 
+
 function statusLabel(s){
   if(s==="occupied") return "มีผู้ป่วย";
-  if(s==="cleaning") return "กำลังทำความสะอาด";
   return "ว่าง";
 }
 function showToast(text){
@@ -514,34 +489,7 @@ function addLog(elId, text){
   item.innerHTML = `<span>${text}</span><span>${time}</span>`;
   document.getElementById(elId).prepend(item);
 }
- 
-/* ---------- HL7 message builder (simplified, illustrative) ---------- */
-function hl7Timestamp(){
-  const d = new Date();
-  const p = n => String(n).padStart(2,'0');
-  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
-}
-function msgControlId(){
-  return "MSG" + Math.floor(10000 + Math.random()*89999);
-}
-function buildHL7(eventType, hn, name, pv1Info){
-  const ts = hl7Timestamp();
-  const msgId = msgControlId();
-  const lines = [
-    `MSH|^~\\&|HIS|HOSPITAL|IBE|ICCA|${ts}||ADT^${eventType}|${msgId}|P|2.3`,
-    `EVN|${eventType}|${ts}`,
-    `PID|1||${hn}^^^HN||${name}||19800101|U`,
-    `PV1|1|I|${pv1Info}`,
-  ];
-  return lines.join('\n');
-}
-function setHL7Box(prefix, text, portText){
-  document.getElementById(prefix + '-hl7').textContent = text;
-  const portEl = document.getElementById(prefix + '-port');
-  portEl.style.display = "inline-flex";
-  portEl.innerHTML = `🔌 ${portText}`;
-}
- 
+
 /* ---------- tabs ---------- */
 document.querySelectorAll('.tab').forEach(t=>{
   t.onclick = () => {
@@ -552,13 +500,23 @@ document.querySelectorAll('.tab').forEach(t=>{
     renderAll();
   };
 });
- 
+
 /* ================= ADMIT ================= */
+const ICU_DIAGNOSES = [
+  "Sepsis (ภาวะติดเชื้อในกระแสเลือด)",
+  "Pneumonia (ปอดอักเสบ)",
+  "Stroke (หลอดเลือดสมอง)",
+  "Trauma (อุบัติเหตุ/บาดเจ็บรุนแรง)",
+  "Post-Surgery (หลังผ่าตัดใหญ่)",
+  "Respiratory Failure (ภาวะหายใจล้มเหลว)",
+  "Cardiac Arrest (หัวใจหยุดเต้น)",
+  "Acute Kidney Injury (ไตวายเฉียบพลัน)",
+];
 const patientQueue = [
-  {hn:"HN-90144", name:"กมล แสงทอง"},
-  {hn:"HN-90218", name:"สมหญิง ใจงาม"},
-  {hn:"HN-90266", name:"ธนากร ศรีสุข"},
-  {hn:"HN-90301", name:"พิมพ์ใจ รุ่งเรือง"},
+  {hn:"HN-90144", name:"กมล แสงทอง", age:67, gender:"M", diagnosis: ICU_DIAGNOSES[1]},
+  {hn:"HN-90218", name:"สมหญิง ใจงาม", age:54, gender:"F", diagnosis: ICU_DIAGNOSES[4]},
+  {hn:"HN-90266", name:"ธนากร ศรีสุข", age:29, gender:"M", diagnosis: ICU_DIAGNOSES[3]},
+  {hn:"HN-90301", name:"พิมพ์ใจ รุ่งเรือง", age:78, gender:"F", diagnosis: ICU_DIAGNOSES[2]},
 ];
 function renderAdmitQueue(){
   const sel = document.getElementById('admit-queue');
@@ -577,9 +535,12 @@ function updateAdmitFields(){
   if(!p) return;
   document.getElementById('admit-hn').value = p.hn;
   document.getElementById('admit-name').value = p.name;
+  document.getElementById('admit-age').value = p.age;
+  document.getElementById('admit-gender').value = p.gender === "M" ? "ชาย" : "หญิง";
+  document.getElementById('admit-diagnosis').value = p.diagnosis;
 }
 document.getElementById('admit-queue').onchange = updateAdmitFields;
- 
+
 /* ---- HIS → IBE → ICCA feed simulator ---- */
 const mockFirstNames = ["ปิยะ", "รัตนา", "ชัยวัฒน์", "สุนีย์", "อภิชาติ", "วรรณา", "ธีรพงษ์", "กาญจนา"];
 const mockLastNames = ["ศรีสวัสดิ์", "บุญมี", "วงศ์ษา", "แก้วมณี", "ทองสุข", "จันทร์เพ็ญ", "รักษ์ดี"];
@@ -588,7 +549,10 @@ function randomPatient(){
   const hn = "HN-" + (90300 + Math.floor(Math.random()*699));
   const name = mockFirstNames[Math.floor(Math.random()*mockFirstNames.length)] + " " +
                mockLastNames[Math.floor(Math.random()*mockLastNames.length)];
-  return { hn, name };
+  const age = 5 + Math.floor(Math.random()*90);
+  const gender = Math.random() < 0.5 ? "M" : "F";
+  const diagnosis = ICU_DIAGNOSES[Math.floor(Math.random()*ICU_DIAGNOSES.length)];
+  return { hn, name, age, gender, diagnosis };
 }
 function litNode(id, on){
   document.getElementById(id).classList.toggle('lit', on);
@@ -600,19 +564,19 @@ document.getElementById('his-simulate').onclick = () => {
   btn.disabled = true;
   btn.textContent = "กำลังรับข้อความ HL7 (ADT)...";
   addLog('admit-log', "HIS: กำลังส่งข้อความผู้ป่วยใหม่ (HL7 ADT)");
- 
+
   litNode('node-his', true);
   setTimeout(()=>{
     document.getElementById('arrow-1').classList.add('lit');
     litNode('node-ibe', true);
     addLog('admit-log', "IBE: รับข้อความและแปลงเป็นมาตรฐาน HL7 สำเร็จ");
   }, 500);
- 
+
   setTimeout(()=>{
     document.getElementById('arrow-2').classList.add('lit');
     litNode('node-icca', true);
   }, 1000);
- 
+
   setTimeout(()=>{
     const p = randomPatient();
     patientQueue.push(p);
@@ -622,7 +586,7 @@ document.getElementById('his-simulate').onclick = () => {
     updateAdmitFields();
     addLog('admit-log', `ICCA: รับข้อมูลผู้ป่วยใหม่ ${p.name} (${p.hn}) เข้าคิว Admit สำเร็จ`);
     showToast(`มีผู้ป่วยใหม่จาก HIS — ${p.name}`);
- 
+
     litNode('node-his', false);
     litNode('node-ibe', false);
     litNode('node-icca', false);
@@ -633,7 +597,7 @@ document.getElementById('his-simulate').onclick = () => {
     simRunning = false;
   }, 1600);
 };
- 
+
 let admitSelected = null;
 function renderAdmit(){
   const grid = document.getElementById('admit-bedgrid');
@@ -657,20 +621,23 @@ function renderAdmit(){
 document.getElementById('admit-confirm').onclick = () => {
   if(!admitSelected) return;
   const bed = beds.find(b=>b.id===admitSelected);
+  const idx = Number(document.getElementById('admit-queue').value);
+  const patientData = patientQueue[idx];
   bed.status = "occupied";
   bed.patient = document.getElementById('admit-name').value;
   bed.hn = document.getElementById('admit-hn').value;
+  bed.age = patientData.age;
+  bed.gender = patientData.gender;
+  bed.diagnosis = patientData.diagnosis;
   addLog('admit-log', `Assign เตียง ${admitSelected} ให้ ${bed.patient} สำเร็จ`);
   showToast(`รับเข้าเตียง ${admitSelected} เรียบร้อยแล้ว`);
-  const hl7 = buildHL7("A01", bed.hn, bed.patient, `38ICU^^${admitSelected}`);
-  setHL7Box("admit", hl7, "ICCA Client → APP1 ผ่าน TCP 9000, แล้วส่งต่อ ADT ไปยัง HIS ผ่าน IBE ด้วย TCP (HL7)");
   recordEvent('admit');
+  recordPatient(patientData, admitSelected, "admit");
   admitSelected = null;
   document.getElementById('admit-confirm').disabled = true;
-  const idx = Number(document.getElementById('admit-queue').value);
   patientQueue.splice(idx, 1);
   if(patientQueue.length === 0){
-    patientQueue.push({hn:"HN-90144", name:"กมล แสงทอง"});
+    patientQueue.push({hn:"HN-90144", name:"กมล แสงทอง", age:67, gender:"M", diagnosis: ICU_DIAGNOSES[1]});
   }
   renderAdmitQueue();
   renderAll();
@@ -680,45 +647,7 @@ document.getElementById('admit-cancel').onclick = () => {
   document.getElementById('admit-confirm').disabled = true;
   renderAdmit();
 };
- 
-/* ---- Race Condition technical demo ---- */
-let raceRunning = false;
-document.getElementById('race-simulate').onclick = () => {
-  if(raceRunning) return;
-  const vacantBed = beds.find(b => b.status === "vacant");
-  if(!vacantBed){
-    addLog('race-log', "⚠ ไม่มีเตียงว่างให้ทดสอบขณะนี้ — ลอง Discharge เตียงบางเตียงก่อน");
-    return;
-  }
-  raceRunning = true;
-  const btn = document.getElementById('race-simulate');
-  btn.disabled = true;
-  const targetBed = vacantBed.id;
-  const otherPatient = { hn: "HN-90777", name: "อรทัย ธนสาร" };
-  const myPatient = { hn: "HN-90888", name: "ศักดิ์ชัย เรืองยศ" };
- 
-  addLog('race-log', `[Client A - เครื่องนี้] ส่งคำขอ Assign เตียง ${targetBed} ให้ ${myPatient.name}`);
-  setTimeout(()=>{
-    addLog('race-log', `[Client B - เครื่องอื่น] ส่งคำขอ Assign เตียง ${targetBed} ให้ ${otherPatient.name} (Timestamp เร็วกว่า 25ms)`);
-  }, 350);
-  setTimeout(()=>{
-    addLog('race-log', "🔒 Database (TCP 1433 / SQL Server): ตรวจพบคำขอชนกัน — ใช้ Row Lock อนุมัติ Client B ก่อนตาม Timestamp");
-  }, 900);
-  setTimeout(()=>{
-    const bed = beds.find(b=>b.id===targetBed);
-    if(bed.status === "vacant"){
-      bed.status = "occupied";
-      bed.patient = otherPatient.name;
-      bed.hn = otherPatient.hn;
-    }
-    addLog('race-log', `❌ [Client A - เครื่องนี้] บันทึกไม่สำเร็จ — เตียง ${targetBed} ถูกล็อกโดยผู้ใช้งานอื่นไปแล้ว กรุณาเลือกเตียงใหม่`);
-    showToast(`⚠ เตียง ${targetBed} ถูกจองไปแล้ว — กรุณาเลือกเตียงใหม่`);
-    renderAll();
-    btn.disabled = false;
-    raceRunning = false;
-  }, 1500);
-};
- 
+
 /* ================= TRANSFER ================= */
 let transferSource = null;
 let transferTarget = null;
@@ -742,7 +671,7 @@ function renderTransfer(){
     };
     list.appendChild(el);
   });
- 
+
   const grid = document.getElementById('transfer-bedgrid');
   grid.innerHTML = "";
   beds.forEach(b=>{
@@ -783,13 +712,17 @@ document.getElementById('transfer-confirm').onclick = () => {
   dst.status = "occupied";
   dst.patient = src.patient;
   dst.hn = src.hn;
+  dst.age = src.age;
+  dst.gender = src.gender;
+  dst.diagnosis = src.diagnosis;
   src.status = "vacant";
   delete src.patient;
   delete src.hn;
+  delete src.age;
+  delete src.gender;
+  delete src.diagnosis;
   addLog('transfer-log', `ย้าย ${dst.patient} จากเตียง ${fromBedId} ไปเตียง ${toBedId} สำเร็จ`);
   showToast(`ย้ายเตียงสำเร็จ — ${dst.patient} อยู่ที่ ${toBedId} แล้ว`);
-  const hl7 = buildHL7("A02", dst.hn, dst.patient, `38ICU^^${toBedId}|||||||||||||||38ICU^^${fromBedId}`);
-  setHL7Box("transfer", hl7, "ICCA Client → APP1 ผ่าน TCP 9000, ADT^A02 ส่งต่อไปยัง HIS ผ่าน IBE ด้วย TCP (HL7)");
   transferSource = null;
   transferTarget = null;
   renderAll();
@@ -799,7 +732,7 @@ document.getElementById('transfer-cancel').onclick = () => {
   transferTarget = null;
   renderTransfer();
 };
- 
+
 /* ================= DISCHARGE ================= */
 let dischargeSelected = null;
 let dischargeRunning = false;
@@ -829,7 +762,7 @@ function renderDischarge(){
     };
     list.appendChild(el);
   });
- 
+
   const label = document.getElementById('discharge-target-label');
   const stepsBox = document.getElementById('discharge-steps');
   const runBtn = document.getElementById('discharge-run');
@@ -857,21 +790,29 @@ document.getElementById('discharge-run').onclick = () => {
   const bed = beds.find(b=>b.id===bedId);
   const patientName = bed.patient;
   const patientHn = bed.hn;
+  const patientAge = bed.age;
+  const patientGender = bed.gender;
+  const patientDiagnosis = bed.diagnosis;
   const steps = document.querySelectorAll('#discharge-steps .step');
   addLog('discharge-log', `เริ่มกระบวนการจำหน่าย ${patientName} จากเตียง ${bedId}`);
- 
+
   let i = 0;
   function runStep(){
     if(i > 0) steps[i-1].classList.remove('active');
     if(i >= steps.length){
-      bed.status = "cleaning";
+      bed.status = "vacant";
       delete bed.patient;
       delete bed.hn;
-      addLog('discharge-log', `Export ข้อมูล ${patientName} ไปยัง EMR สำเร็จ — เตียง ${bedId} อยู่ระหว่างทำความสะอาด`);
-      showToast(`จำหน่าย ${patientName} สำเร็จ — เตียง ${bedId} รอทำความสะอาด`);
-      const hl7 = buildHL7("A03", patientHn, patientName, `38ICU^^${bedId}`);
-      setHL7Box("discharge", hl7, "APP2 ส่งข้อมูลผ่าน IBE ด้วย TCP (HL7) ประเภท ORU ไปเก็บที่ HIS/EMR");
+      delete bed.age;
+      delete bed.gender;
+      delete bed.diagnosis;
+      addLog('discharge-log', `Export ข้อมูล ${patientName} ไปยัง EMR สำเร็จ — เตียง ${bedId} ว่างแล้ว`);
+      showToast(`จำหน่าย ${patientName} สำเร็จ — เตียง ${bedId} ว่างแล้ว`);
       recordEvent('discharge');
+      recordPatient(
+        { hn: patientHn, name: patientName, age: patientAge, gender: patientGender, diagnosis: patientDiagnosis },
+        bedId, "discharge"
+      );
       dischargeRunning = false;
       dischargeSelected = null;
       renderAll();
@@ -893,7 +834,7 @@ document.getElementById('discharge-cancel').onclick = () => {
   dischargeSelected = null;
   renderDischarge();
 };
- 
+
 /* ================= DASHBOARD (Firebase Firestore, real-time across devices + mock demo mode) ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyBEpwwNApqLAc_GfyvEQbm0CyPpuZaerWs",
@@ -914,10 +855,10 @@ try{
   console.error("Firebase init failed", e);
   firestoreError = true;
 }
- 
+
 let dashboardMode = "real"; // "real" | "mock"
 let firestoreStatsCache = {};
- 
+
 const mockStats = {
   "2026-09-07": { admit: 4, discharge: 2 },
   "2026-09-08": { admit: 6, discharge: 5 },
@@ -925,7 +866,7 @@ const mockStats = {
   "2026-09-10": { admit: 7, discharge: 4 },
   "2026-09-11": { admit: 5, discharge: 1 },
 };
- 
+
 function todayKey(){
   const d = new Date();
   const yyyy = d.getFullYear();
@@ -967,6 +908,130 @@ function recordEvent(type){
     showToast("⚠ บันทึกสถิติไม่สำเร็จ ตรวจสอบอินเทอร์เน็ต");
   });
 }
+
+/* ---- Patient demographics (gender / age group / diagnosis) ---- */
+let firestorePatientsCache = [];
+const mockPatients = [
+  {hn:"HN-80001", name:"สมชาย รุ่งโรจน์", gender:"M", age:67, diagnosis: ICU_DIAGNOSES[1], date:"2026-09-07", type:"admit"},
+  {hn:"HN-80002", name:"มาลี ทองอยู่", gender:"F", age:54, diagnosis: ICU_DIAGNOSES[4], date:"2026-09-07", type:"admit"},
+  {hn:"HN-79988", name:"ประเสริฐ วงศ์ใหญ่", gender:"M", age:70, diagnosis: ICU_DIAGNOSES[0], date:"2026-09-07", type:"discharge"},
+  {hn:"HN-80010", name:"ธนากร ศรีสุข", gender:"M", age:29, diagnosis: ICU_DIAGNOSES[3], date:"2026-09-08", type:"admit"},
+  {hn:"HN-80011", name:"พิมพ์ใจ รุ่งเรือง", gender:"F", age:78, diagnosis: ICU_DIAGNOSES[2], date:"2026-09-08", type:"admit"},
+  {hn:"HN-80002", name:"มาลี ทองอยู่", gender:"F", age:54, diagnosis: ICU_DIAGNOSES[4], date:"2026-09-08", type:"discharge"},
+  {hn:"HN-80020", name:"อภิชาติ วรรณา", gender:"M", age:45, diagnosis: ICU_DIAGNOSES[0], date:"2026-09-09", type:"admit"},
+  {hn:"HN-80021", name:"สุนีย์ แก้วมณี", gender:"F", age:81, diagnosis: ICU_DIAGNOSES[1], date:"2026-09-09", type:"admit"},
+  {hn:"HN-80022", name:"ชัยวัฒน์ บุญมี", gender:"M", age:15, diagnosis: ICU_DIAGNOSES[3], date:"2026-09-09", type:"discharge"},
+  {hn:"HN-80030", name:"รัตนา จันทร์เพ็ญ", gender:"F", age:36, diagnosis: ICU_DIAGNOSES[4], date:"2026-09-10", type:"admit"},
+  {hn:"HN-80031", name:"ธีรพงษ์ รักษ์ดี", gender:"M", age:72, diagnosis: ICU_DIAGNOSES[0], date:"2026-09-10", type:"admit"},
+  {hn:"HN-80010", name:"ธนากร ศรีสุข", gender:"M", age:29, diagnosis: ICU_DIAGNOSES[3], date:"2026-09-10", type:"discharge"},
+  {hn:"HN-80040", name:"กาญจนา ศรีสวัสดิ์", gender:"F", age:60, diagnosis: ICU_DIAGNOSES[6], date:"2026-09-11", type:"admit"},
+  {hn:"HN-80020", name:"อภิชาติ วรรณา", gender:"M", age:45, diagnosis: ICU_DIAGNOSES[0], date:"2026-09-11", type:"discharge"},
+];
+function ageGroupOf(age){
+  if(age <= 18) return "0-18 ปี";
+  if(age <= 40) return "19-40 ปี";
+  if(age <= 60) return "41-60 ปี";
+  return "61 ปีขึ้นไป";
+}
+function recordPatient(patientData, bedId, type){
+  if(!firestoreReady || !patientData) return;
+  db.collection("icca_patients").add({
+    hn: patientData.hn,
+    name: patientData.name,
+    age: patientData.age,
+    gender: patientData.gender,
+    diagnosis: patientData.diagnosis,
+    bed: bedId,
+    type: type || "admit",
+    date: todayKey(),
+    ts: Date.now(),
+  }).catch((e) => {
+    console.error("บันทึกข้อมูลประชากรผู้ป่วยไม่สำเร็จ", e);
+  });
+}
+function seedInitialPatients(){
+  if(!firestoreReady) return;
+  const today = todayKey();
+  const occupiedBeds = beds.filter(b => b.status === "occupied");
+  occupiedBeds.forEach((b) => {
+    const seedId = "seed-" + b.id;
+    db.collection("icca_patients").doc(seedId).set({
+      hn: b.hn,
+      name: b.patient,
+      age: b.age,
+      gender: b.gender,
+      diagnosis: b.diagnosis,
+      bed: b.id,
+      type: "admit",
+      date: today,
+      ts: Date.now(),
+    }).catch((e) => {
+      console.error("บันทึกข้อมูลผู้ป่วยเดิมไม่สำเร็จ", e);
+    });
+  });
+}
+function subscribePatients(){
+  if(!firestoreReady) return;
+  db.collection("icca_patients").onSnapshot(
+    (snapshot) => {
+      const list = [];
+      snapshot.forEach((doc) => list.push(doc.data()));
+      firestorePatientsCache = list;
+      if(dashboardMode === "real") renderDashboard();
+    },
+    (err) => {
+      console.error("Firestore patients sync error", err);
+    }
+  );
+}
+function renderSimpleBars(containerId, items, color){
+  const box = document.getElementById(containerId);
+  box.innerHTML = "";
+  if(items.length === 0){
+    box.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
+    return;
+  }
+  const maxVal = Math.max(1, ...items.map(it => it.value));
+  items.forEach((it) => {
+    const pct = Math.round((it.value / maxVal) * 100);
+    const row = document.createElement('div');
+    row.className = "barrow";
+    row.innerHTML = `
+      <div class="barlabel"><span>${it.label}</span><span>${it.value} คน</span></div>
+      <div class="bartrack"><div class="barfill" style="width:${pct}%;background:${color}"></div></div>
+    `;
+    box.appendChild(row);
+  });
+}
+function renderDemographics(){
+  const allPatients = dashboardMode === "real" ? firestorePatientsCache : mockPatients;
+  const patients = allPatients.filter(p => (p.type || "admit") === "admit");
+  document.getElementById('dash-demo-total').textContent = `จากข้อมูลผู้ป่วยที่ Admit แล้วทั้งหมด ${patients.length} คน`;
+
+  const male = patients.filter(p => p.gender === "M").length;
+  const female = patients.filter(p => p.gender === "F").length;
+  renderSimpleBars('dash-gender', [
+    { label: "ชาย", value: male },
+    { label: "หญิง", value: female },
+  ], "var(--blue)");
+
+  const groups = ["0-18 ปี", "19-40 ปี", "41-60 ปี", "61 ปีขึ้นไป"];
+  const ageItems = groups.map(g => ({
+    label: g,
+    value: patients.filter(p => ageGroupOf(p.age) === g).length,
+  }));
+  renderSimpleBars('dash-agegroup', ageItems, "var(--teal)");
+
+  const diagCount = {};
+  patients.forEach(p => {
+    diagCount[p.diagnosis] = (diagCount[p.diagnosis] || 0) + 1;
+  });
+  const diagItems = Object.keys(diagCount)
+    .map(k => ({ label: k, value: diagCount[k] }))
+    .sort((a,b) => b.value - a.value)
+    .slice(0, 5);
+  renderSimpleBars('dash-diagnosis', diagItems, "var(--coral)");
+}
 function formatDateLabel(key){
   const [y,m,d] = key.split('-');
   return `${d}/${m}/${y.slice(2)}`;
@@ -996,7 +1061,7 @@ function setDashboardMode(mode){
 }
 document.getElementById('dash-mode-real').onclick = () => setDashboardMode("real");
 document.getElementById('dash-mode-mock').onclick = () => setDashboardMode("mock");
- 
+
 function renderDashboard(){
   const stats = dashboardMode === "real" ? firestoreStatsCache : mockStats;
   const today = dashboardMode === "real" ? todayKey() : "2026-09-11";
@@ -1004,7 +1069,7 @@ function renderDashboard(){
   document.getElementById('dash-today-date').textContent = formatDateLabel(today);
   document.getElementById('dash-today-admit').textContent = todayStat.admit;
   document.getElementById('dash-today-discharge').textContent = todayStat.discharge;
- 
+
   const days = Object.keys(stats).sort();
   let totalAdmit = 0, totalDischarge = 0;
   days.forEach(k=>{
@@ -1015,12 +1080,13 @@ function renderDashboard(){
   document.getElementById('dash-total-discharge').textContent = totalDischarge;
   document.getElementById('dash-range-label').textContent =
     days.length > 0 ? `บันทึกไว้ทั้งหมด ${days.length} วัน` : "ยังไม่มีข้อมูลบันทึกไว้";
- 
+
   const chart = document.getElementById('dash-chart');
   chart.innerHTML = "";
   const last5 = days.slice(-5);
   if(last5.length === 0){
     chart.innerHTML = '<div class="empty">ยังไม่มีข้อมูล — ลองไป Admit หรือ Discharge ผู้ป่วยดูก่อน แล้วกลับมาดูที่นี่</div>';
+    renderDemographics();
     return;
   }
   const maxVal = Math.max(1, ...last5.map(k => Math.max(stats[k].admit||0, stats[k].discharge||0)));
@@ -1037,6 +1103,7 @@ function renderDashboard(){
     `;
     chart.appendChild(row);
   });
+  renderDemographics();
 }
 document.getElementById('dash-reset').onclick = () => {
   if(dashboardMode !== "real" || !firestoreReady) return;
@@ -1053,37 +1120,70 @@ document.getElementById('dash-reset').onclick = () => {
     });
   }
 };
- 
+
 document.getElementById('dash-export').onclick = () => {
-  const stats = dashboardMode === "real" ? firestoreStatsCache : mockStats;
-  const days = Object.keys(stats).sort();
-  if(days.length === 0){
+  const allPatients = dashboardMode === "real" ? firestorePatientsCache : mockPatients;
+  if(allPatients.length === 0){
     showToast("⚠ ยังไม่มีข้อมูลให้ Export");
     return;
   }
-  const rows = [["วันที่", "Admit", "Discharge"]];
-  days.forEach((k) => {
-    rows.push([k, stats[k].admit || 0, stats[k].discharge || 0]);
+  const typeLabel = { admit: "รับเข้า", discharge: "จำหน่าย" };
+  const typeOrder = { admit: 0, discharge: 1 };
+  const genderLabel = { M: "ชาย", F: "หญิง" };
+
+  const sorted = allPatients.slice().sort((a, b) => {
+    if(a.date !== b.date) return a.date < b.date ? -1 : 1;
+    const ta = typeOrder[a.type || "admit"] ?? 0;
+    const tb = typeOrder[b.type || "admit"] ?? 0;
+    return ta - tb;
   });
-  const totalAdmit = days.reduce((sum, k) => sum + (stats[k].admit || 0), 0);
-  const totalDischarge = days.reduce((sum, k) => sum + (stats[k].discharge || 0), 0);
-  rows.push(["รวม", totalAdmit, totalDischarge]);
- 
-  const csvContent = rows.map((r) => r.join(",")).join("\r\n");
+
+  const rows = [["วันที่", "ประเภท", "HN", "ชื่อ", "เพศ", "อายุ", "การวินิจฉัย"]];
+  sorted.forEach((p) => {
+    rows.push([
+      p.date || "",
+      typeLabel[p.type || "admit"] || "รับเข้า",
+      p.hn || "",
+      p.name || "",
+      genderLabel[p.gender] || p.gender || "",
+      p.age != null ? p.age : "",
+      p.diagnosis || "",
+    ]);
+  });
+
+  // Per-day summary counts appended at the bottom for quick reference
+  const byDate = {};
+  sorted.forEach((p) => {
+    const d = p.date || "";
+    if(!byDate[d]) byDate[d] = { admit: 0, discharge: 0 };
+    byDate[d][(p.type || "admit")] = (byDate[d][(p.type || "admit")] || 0) + 1;
+  });
+  rows.push([]);
+  rows.push(["สรุปรายวัน"]);
+  rows.push(["วันที่", "จำนวนรับเข้า", "จำนวนจำหน่าย"]);
+  Object.keys(byDate).sort().forEach((d) => {
+    rows.push([d, byDate[d].admit || 0, byDate[d].discharge || 0]);
+  });
+
+  const escapeCsv = (val) => {
+    const s = String(val);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const csvContent = rows.map((r) => r.map(escapeCsv).join(",")).join("\r\n");
   const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const modeLabel = dashboardMode === "real" ? "real" : "mock-demo";
   const a = document.createElement('a');
   a.href = url;
-  a.download = `icca_stats_${modeLabel}_${todayKey()}.csv`;
+  a.download = `icca_patients_${modeLabel}_${todayKey()}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   showToast("Export CSV สำเร็จ — ตรวจสอบโฟลเดอร์ดาวน์โหลด");
-  addLog('admit-log', `Export สถิติ${dashboardMode === "real" ? "จริง" : "จำลอง"}เป็น CSV (${days.length} วัน)`);
+  addLog('admit-log', `Export ข้อมูลผู้ป่วย${dashboardMode === "real" ? "จริง" : "จำลอง"}เป็น CSV (${sorted.length} รายการ)`);
 };
- 
+
 /* ---------- init ---------- */
 function renderAll(){
   renderAdmit();
@@ -1095,11 +1195,10 @@ renderAdmitQueue();
 addLog('admit-log', "เปิดหน้าจอ Admit — มีผู้ป่วยรอในคิว 4 ราย");
 renderAll();
 subscribeStats();
+subscribePatients();
+seedInitialPatients();
 setDashboardMode("real");
 </script>
- 
+
 </body>
 </html>
- 
-
-
