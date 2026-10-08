@@ -265,6 +265,7 @@
   <button class="tab" data-tab="transfer">ย้ายเตียง (Transfer)</button>
   <button class="tab" data-tab="discharge">จำหน่าย (Discharge)</button>
   <button class="tab" data-tab="dashboard">สถิติ (Dashboard)</button>
+  <button class="tab" data-tab="sql">SQL Query</button>
 </div>
 
 <div class="wrap">
@@ -408,6 +409,35 @@
   </div>
 
   <!-- DASHBOARD PANEL -->
+  <!-- SQL PANEL -->
+  <div class="panel hidden" id="panel-sql">
+    <div class="header">
+      <h1>วิเคราะห์ข้อมูลด้วย SQL</h1>
+      <p>ข้อมูลผู้ป่วยและเตียงถูกโหลดเป็นตาราง SQLite (sql.js) ในเบราว์เซอร์ แล้วใช้ SELECT วิเคราะห์ได้เหมือนฐานข้อมูลจริง · อ่านอย่างเดียว</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+      <label style="font-size:13px;color:var(--ink-soft);">แหล่งข้อมูล
+        <select id="sql-source" style="margin-left:6px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;font:inherit;">
+          <option value="real">ข้อมูลจริง (Firebase)</option>
+          <option value="mock">ข้อมูลจำลอง (Demo)</option>
+        </select>
+      </label>
+      <span id="sql-presets" style="display:flex;gap:6px;flex-wrap:wrap;"></span>
+    </div>
+    <textarea id="sql-input" spellcheck="false" style="width:100%;min-height:130px;box-sizing:border-box;font-family:ui-monospace,Consolas,monospace;font-size:13px;padding:12px;border:1px solid var(--line);border-radius:8px;"></textarea>
+    <div style="display:flex;gap:10px;align-items:center;margin:10px 0 14px;">
+      <button id="sql-run" class="tab active" style="border-radius:8px;">▶ Run Query</button>
+      <span id="sql-status" style="font-size:13px;color:var(--ink-soft);"></span>
+    </div>
+    <div id="sql-result" style="overflow:auto;max-height:340px;border:1px solid var(--line);border-radius:8px;"></div>
+    <details style="margin-top:14px;font-size:13px;color:var(--ink-soft);">
+      <summary style="cursor:pointer;">โครงสร้างตาราง (Schema)</summary>
+      <pre style="white-space:pre-wrap;font-size:12.5px;">beds(bed_id, status, hn, age, gender, diagnosis)
+patient_events(hn, name, age, gender, diagnosis, bed, type, date, ts)   -- type = 'admit' | 'discharge'
+stays(hn, diagnosis, age, gender, admit_date, discharge_date)           -- VIEW จับคู่ admit กับ discharge</pre>
+    </details>
+  </div>
+
   <div class="panel hidden" id="panel-dashboard">
     <div class="header">
       <h1>สถิติผู้ป่วย (Dashboard)</h1>
@@ -1425,6 +1455,96 @@ function renderAll(){
 }
 renderAdmitQueue();
 addLog('admit-log', "เปิดหน้าจอ Admit — มีผู้ป่วยรอในคิว 4 ราย");
+
+/* ================= SQL QUERY (sql.js / SQLite in browser) ================= */
+const SQL_PRESETS = [
+  {label:"Occupancy Rate", sql:"SELECT COUNT(*) AS occupied_beds,\n       (SELECT COUNT(*) FROM beds) AS total_beds,\n       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM beds), 1) AS occupancy_pct\nFROM beds WHERE status = 'occupied';"},
+  {label:"Admit/Discharge รายวัน", sql:"SELECT date,\n       SUM(type = 'admit') AS admits,\n       SUM(type = 'discharge') AS discharges\nFROM patient_events\nGROUP BY date ORDER BY date;"},
+  {label:"Average LOS (วัน)", sql:"SELECT ROUND(AVG(julianday(discharge_date) - julianday(admit_date)), 2) AS avg_los_days,\n       COUNT(*) AS completed_stays\nFROM stays WHERE discharge_date IS NOT NULL;"},
+  {label:"Top 5 การวินิจฉัย", sql:"SELECT diagnosis, COUNT(*) AS cases\nFROM patient_events WHERE type = 'admit'\nGROUP BY diagnosis ORDER BY cases DESC LIMIT 5;"},
+  {label:"ช่วงอายุ x เพศ", sql:"SELECT CASE WHEN age <= 18 THEN '0-18'\n            WHEN age <= 40 THEN '19-40'\n            WHEN age <= 60 THEN '41-60'\n            ELSE '61+' END AS age_group,\n       gender, COUNT(*) AS patients\nFROM patient_events WHERE type = 'admit'\nGROUP BY age_group, gender ORDER BY age_group;"},
+];
+let sqlLib = null, sqlLoading = null, sqlInited = false;
+function loadSqlJs(){
+  if(sqlLib) return Promise.resolve(sqlLib);
+  if(sqlLoading) return sqlLoading;
+  const base = "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/";
+  sqlLoading = new Promise((resolve, reject) => {
+    const sc = document.createElement("script");
+    sc.src = base + "sql-wasm.js";
+    sc.onload = () => initSqlJs({ locateFile: f => base + f }).then(l => { sqlLib = l; resolve(l); }, reject);
+    sc.onerror = () => reject(new Error("โหลด sql.js ไม่สำเร็จ (ตรวจสอบอินเทอร์เน็ต)"));
+    document.head.appendChild(sc);
+  });
+  return sqlLoading;
+}
+function buildSqlDb(SQL, source){
+  const d = new SQL.Database();
+  d.run("CREATE TABLE beds(bed_id TEXT PRIMARY KEY, status TEXT, hn TEXT, age INT, gender TEXT, diagnosis TEXT);");
+  d.run("CREATE TABLE patient_events(hn TEXT, name TEXT, age INT, gender TEXT, diagnosis TEXT, bed TEXT, type TEXT, date TEXT, ts INT);");
+  d.run("CREATE VIEW stays AS SELECT a.hn, a.diagnosis, a.age, a.gender, a.date AS admit_date, (SELECT MIN(x.date) FROM patient_events x WHERE x.hn = a.hn AND x.type = 'discharge' AND x.date >= a.date) AS discharge_date FROM patient_events a WHERE a.type = 'admit';");
+  const bs = d.prepare("INSERT INTO beds VALUES (?,?,?,?,?,?)");
+  beds.forEach(b => bs.run([b.id, b.status, b.hn || null, b.age ?? null, b.gender || null, b.diagnosis || null]));
+  bs.free();
+  const list = source === "real" ? firestorePatientsCache : mockPatients;
+  const ps = d.prepare("INSERT INTO patient_events VALUES (?,?,?,?,?,?,?,?,?)");
+  list.forEach(p => ps.run([p.hn || null, p.name || null, p.age ?? null, p.gender || null, p.diagnosis || null, p.bed || null, p.type || "admit", p.date || null, p.ts ?? null]));
+  ps.free();
+  return d;
+}
+function sqlSetStatus(msg, isErr){
+  const el = document.getElementById("sql-status");
+  el.textContent = msg;
+  el.style.color = isErr ? "var(--coral)" : "var(--ink-soft)";
+}
+function runSqlQuery(){
+  const text = document.getElementById("sql-input").value.trim().replace(/;+\s*$/, "");
+  const out = document.getElementById("sql-result");
+  out.textContent = "";
+  if(!/^(select|with)\b/i.test(text) || text.includes(";")){
+    sqlSetStatus("อนุญาตเฉพาะคำสั่ง SELECT / WITH เพียงคำสั่งเดียว", true);
+    return;
+  }
+  sqlSetStatus("กำลังรัน...", false);
+  loadSqlJs().then(SQL => {
+    const d = buildSqlDb(SQL, document.getElementById("sql-source").value);
+    try {
+      const t0 = performance.now();
+      const res = d.exec(text);
+      const ms = Math.round(performance.now() - t0);
+      if(!res.length){ sqlSetStatus("สำเร็จ · ไม่มีแถวผลลัพธ์ (" + ms + " ms)", false); return; }
+      const r = res[0];
+      const tbl = document.createElement("table");
+      tbl.style.cssText = "border-collapse:collapse;width:100%;font-size:13px;";
+      const hr = tbl.insertRow();
+      r.columns.forEach(c => { const th = document.createElement("th"); th.textContent = c; th.style.cssText = "text-align:left;padding:8px 10px;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;"; hr.appendChild(th); });
+      r.values.forEach(row => { const tr = tbl.insertRow(); row.forEach(v => { const td = tr.insertCell(); td.textContent = v === null ? "NULL" : v; td.style.cssText = "padding:7px 10px;border-bottom:1px solid var(--line);"; }); });
+      out.appendChild(tbl);
+      sqlSetStatus(r.values.length + " แถว (" + ms + " ms)", false);
+    } catch(e) {
+      sqlSetStatus("SQL error: " + e.message, true);
+    } finally { d.close(); }
+  }).catch(e => sqlSetStatus(e.message, true));
+}
+function initSqlTab(){
+  if(sqlInited) return;
+  sqlInited = true;
+  const box = document.getElementById("sql-presets");
+  SQL_PRESETS.forEach(p => {
+    const b = document.createElement("button");
+    b.textContent = p.label;
+    b.style.cssText = "padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);font:inherit;font-size:12.5px;cursor:pointer;";
+    b.onclick = () => { document.getElementById("sql-input").value = p.sql; runSqlQuery(); };
+    box.appendChild(b);
+  });
+  document.getElementById("sql-source").value = dashboardMode;
+  document.getElementById("sql-input").value = SQL_PRESETS[0].sql;
+  document.getElementById("sql-run").onclick = runSqlQuery;
+  document.getElementById("sql-source").onchange = runSqlQuery;
+  loadSqlJs().then(runSqlQuery).catch(e => sqlSetStatus(e.message, true));
+}
+document.querySelector('.tab[data-tab="sql"]').addEventListener("click", initSqlTab);
+
 renderAll();
 subscribeStats();
 subscribePatients();
