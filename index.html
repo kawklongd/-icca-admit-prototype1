@@ -116,6 +116,15 @@
     width:100%;padding:9px 11px;border:1px solid var(--line);
     border-radius:7px;font-size:14px;font-family:inherit;background:#fff;
   }
+  .hl7box{
+    width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid var(--line);
+    border-radius:7px;font-size:12px;line-height:1.5;
+    font-family:"SFMono-Regular",Consolas,"Courier New",monospace;
+    background:#0f172a;color:#8ee6b0;resize:vertical;min-height:108px;white-space:pre-wrap;word-break:break-all;
+  }
+  .hl7note{font-size:11px;color:var(--ink-soft);margin:6px 0 0;}
+  .hl7row{display:flex;gap:8px;margin-top:8px;}
+  .hl7row .btn{flex:1;font-size:12px;padding:8px 10px;}
 
   .legend{display:flex;gap:12px;font-size:11px;color:var(--ink-soft);flex-wrap:wrap;}
   .legend span{display:flex;align-items:center;gap:5px;}
@@ -278,6 +287,14 @@
           📨 จำลองผู้ป่วยใหม่ส่งมาจาก HIS (HL7 ADT)
         </button>
 
+        <label>ข้อความ HL7 ดิบ (Raw HL7 ADT^A01 Message) — แก้ไขได้</label>
+        <textarea id="admit-hl7-raw" class="hl7box" spellcheck="false"></textarea>
+        <p class="hl7note">จำลองข้อความจริงที่ HIS ส่งผ่าน IBE มายัง ICCA แก้ไขค่าในช่อง PID / DG1 แล้วกด "แปลงข้อมูลจาก HL7" เพื่อนำข้อมูลจากต้นทางมาใช้ที่ปลายทาง</p>
+        <div class="hl7row">
+          <button class="btn" id="admit-hl7-parse" type="button">📝 แปลงข้อมูลจาก HL7 → ใช้งาน</button>
+          <button class="btn" id="admit-hl7-reset" type="button">↺ สร้างใหม่จากคิวปัจจุบัน</button>
+        </div>
+
         <label>ผู้ป่วยที่รอ Admit (จำลองคิวจาก HIS)</label>
         <select id="admit-queue"></select>
         <label>HN (Hospital Number)</label>
@@ -421,6 +438,29 @@
       </div>
     </div>
 
+    <h2 style="font-size:13px;font-weight:600;margin:22px 0 4px;">ตัวชี้วัดการใช้เตียง (Bed Utilization)</h2>
+    <p class="sub" style="margin:0 0 12px;">คำนวณจากสถานะเตียงปัจจุบันและสถิติ Admit/Discharge ที่บันทึกไว้</p>
+    <div class="grid2" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:22px;">
+      <div class="card" style="background:#fff;">
+        <h2 style="font-size:12px;">อัตราการครองเตียง</h2>
+        <p class="sub">Occupancy Rate</p>
+        <div style="font-size:24px;font-weight:700;color:var(--blue);margin-top:4px;" id="dash-occupancy-rate">-</div>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;" id="dash-occupancy-sub">-</div>
+      </div>
+      <div class="card" style="background:#fff;">
+        <h2 style="font-size:12px;">ระยะเวลาพักรักษาเฉลี่ย</h2>
+        <p class="sub">Average Length of Stay</p>
+        <div style="font-size:24px;font-weight:700;color:var(--teal-600);margin-top:4px;" id="dash-alos">-</div>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;" id="dash-alos-sub">-</div>
+      </div>
+      <div class="card" style="background:#fff;">
+        <h2 style="font-size:12px;">อัตราการหมุนเวียนเตียง</h2>
+        <p class="sub">Bed Turnover Rate</p>
+        <div style="font-size:24px;font-weight:700;color:var(--coral);margin-top:4px;" id="dash-turnover">-</div>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;" id="dash-turnover-sub">-</div>
+      </div>
+    </div>
+
     <h2 style="font-size:13px;font-weight:600;margin:22px 0 4px;">สถิติรายวัน (ล่าสุด 5 วันที่มีข้อมูล)</h2>
     <p class="sub" style="margin:0 0 12px;">แท่งสีเขียว = Admit · แท่งสีส้ม = Discharge</p>
     <div id="dash-chart"></div>
@@ -439,7 +479,7 @@
       </div>
     </div>
 
-    <p class="sub" style="margin:18px 0 6px;font-weight:600;color:var(--ink);">การวินิจฉัยที่พบ</p>
+    <p class="sub" style="margin:18px 0 6px;font-weight:600;color:var(--ink);">การวินิจฉัยที่พบบ่อยสุด (Top 5)</p>
     <div id="dash-diagnosis"></div>
 
     <div class="actions" style="justify-content:space-between;align-items:center;">
@@ -538,8 +578,102 @@ function updateAdmitFields(){
   document.getElementById('admit-age').value = p.age;
   document.getElementById('admit-gender').value = p.gender === "M" ? "ชาย" : "หญิง";
   document.getElementById('admit-diagnosis').value = p.diagnosis;
+  syncHL7FromFields();
 }
 document.getElementById('admit-queue').onchange = updateAdmitFields;
+
+/* ---- HL7 ADT^A01 raw message: build (source) + parse (destination) ---- */
+function hl7Timestamp(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,"0");
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+function ageToDOB(age){
+  const year = new Date().getFullYear() - Number(age || 0);
+  return `${year}0101`;
+}
+function dobToAge(dob){
+  const year = Number(String(dob || "").slice(0,4));
+  if(!year) return "";
+  return new Date().getFullYear() - year;
+}
+function splitThaiName(name){
+  const parts = String(name || "").trim().split(/\s+/);
+  const first = parts[0] || "";
+  const last = parts.slice(1).join(" ") || "";
+  return { first, last };
+}
+function buildHL7(p){
+  const { first, last } = splitThaiName(p.name);
+  const ts = hl7Timestamp();
+  const msgId = "MSG" + Math.floor(10000 + Math.random()*89999);
+  return [
+    `MSH|^~\\&|HIS|HOSPITAL|ICCA|38ICU|${ts}||ADT^A01|${msgId}|P|2.3`,
+    `EVN|A01|${ts}`,
+    `PID|1||${p.hn}^^^HIS||${last}^${first}||${ageToDOB(p.age)}|${p.gender}`,
+    `DG1|1||${p.diagnosis}`,
+    `PV1|1|I|38ICU^^ICU4||||||||||||||||V001`,
+  ].join("\n");
+}
+function syncHL7FromFields(){
+  const box = document.getElementById('admit-hl7-raw');
+  if(!box || document.activeElement === box) return; // don't clobber while user is typing
+  const p = {
+    hn: document.getElementById('admit-hn').value,
+    name: document.getElementById('admit-name').value,
+    age: document.getElementById('admit-age').value,
+    gender: document.getElementById('admit-gender').value === "ชาย" ? "M" : "F",
+    diagnosis: document.getElementById('admit-diagnosis').value,
+  };
+  box.value = buildHL7(p);
+}
+function parseHL7(raw){
+  const segs = {};
+  raw.split(/\r\n|\r|\n/).forEach(line=>{
+    const fields = line.split("|");
+    const tag = fields[0];
+    if(tag) segs[tag] = fields;
+  });
+  const pid = segs["PID"];
+  const dg1 = segs["DG1"];
+  if(!pid) throw new Error("ไม่พบ segment PID ในข้อความ HL7");
+  const hn = (pid[3] || "").split("^")[0];
+  const nameParts = (pid[5] || "").split("^");
+  const last = nameParts[0] || "";
+  const first = nameParts[1] || "";
+  const name = [first, last].filter(Boolean).join(" ");
+  const dob = pid[7] || "";
+  const gender = (pid[8] || "M").trim();
+  const age = dobToAge(dob);
+  const diagnosis = dg1 ? (dg1[3] || "") : "";
+  if(!hn || !name) throw new Error("ข้อมูล PID ไม่ครบ (ต้องมี HN และชื่อ-นามสกุล)");
+  return { hn, name, age, gender: gender === "F" ? "F" : "M", diagnosis };
+}
+document.getElementById('admit-hl7-parse').onclick = () => {
+  try{
+    const raw = document.getElementById('admit-hl7-raw').value;
+    const p = parseHL7(raw);
+    document.getElementById('admit-hn').value = p.hn;
+    document.getElementById('admit-name').value = p.name;
+    document.getElementById('admit-age').value = p.age;
+    document.getElementById('admit-gender').value = p.gender === "M" ? "ชาย" : "หญิง";
+    if(p.diagnosis) document.getElementById('admit-diagnosis').value = p.diagnosis;
+    // keep the in-memory queue record consistent so Confirm/CSV export use the edited data
+    const idx = Number(document.getElementById('admit-queue').value);
+    if(patientQueue[idx]){
+      patientQueue[idx] = { ...patientQueue[idx], hn: p.hn, name: p.name, age: Number(p.age) || patientQueue[idx].age, gender: p.gender, diagnosis: p.diagnosis || patientQueue[idx].diagnosis };
+    }
+    addLog('admit-log', `IBE: แปลงข้อความ HL7 (ADT^A01) จากต้นทาง และอัปเดตข้อมูลผู้ป่วยที่ปลายทาง (ICCA) สำเร็จ`);
+    showToast("แปลงข้อมูลจาก HL7 สำเร็จ — นำไปใช้ที่ฟอร์มแล้ว");
+  }catch(e){
+    showToast("⚠ อ่านข้อความ HL7 ไม่สำเร็จ: " + e.message);
+  }
+};
+document.getElementById('admit-hl7-reset').onclick = () => {
+  document.getElementById('admit-hl7-raw').value = "";
+  syncHL7FromFields();
+  showToast("สร้างข้อความ HL7 ใหม่จากข้อมูลคิวปัจจุบันแล้ว");
+};
 
 /* ---- HIS → IBE → ICCA feed simulator ---- */
 const mockFirstNames = ["ปิยะ", "รัตนา", "ชัยวัฒน์", "สุนีย์", "อภิชาติ", "วรรณา", "ธีรพงษ์", "กาญจนา"];
@@ -1062,6 +1196,60 @@ function setDashboardMode(mode){
 document.getElementById('dash-mode-real').onclick = () => setDashboardMode("real");
 document.getElementById('dash-mode-mock').onclick = () => setDashboardMode("mock");
 
+function computeALOS(patients){
+  // จับคู่ discharge กับ admit ล่าสุดก่อนหน้าของ HN เดียวกัน (เรียงตามวันที่ ascending)
+  const byHN = {};
+  patients.forEach(p => {
+    const hn = p.hn || "unknown";
+    if(!byHN[hn]) byHN[hn] = [];
+    byHN[hn].push(p);
+  });
+  const stays = [];
+  Object.values(byHN).forEach(events => {
+    const admits = events.filter(e => (e.type || "admit") === "admit").sort((a,b)=> a.date.localeCompare(b.date));
+    const discharges = events.filter(e => e.type === "discharge").sort((a,b)=> a.date.localeCompare(b.date));
+    discharges.forEach(d => {
+      const candidates = admits.filter(a => a.date <= d.date).sort((a,b)=> b.date.localeCompare(a.date));
+      if(candidates[0]){
+        const days = (new Date(d.date) - new Date(candidates[0].date)) / 86400000;
+        stays.push(Math.max(days, 0));
+      }
+    });
+  });
+  if(stays.length === 0) return null;
+  return { avgDays: stays.reduce((a,b)=>a+b,0) / stays.length, n: stays.length };
+}
+function renderBedMetrics(){
+  // อัตราการครองเตียง — คำนวณจากสถานะเตียงจริงในผังเตียงปัจจุบัน (ไม่ขึ้นกับโหมดจริง/จำลอง)
+  const occupied = beds.filter(b => b.status === "occupied").length;
+  const occRate = Math.round((occupied / beds.length) * 100);
+  document.getElementById('dash-occupancy-rate').textContent = `${occRate}%`;
+  document.getElementById('dash-occupancy-sub').textContent = `${occupied} / ${beds.length} เตียง (38ICU)`;
+
+  const allPatients = dashboardMode === "real" ? firestorePatientsCache : mockPatients;
+  const alos = computeALOS(allPatients);
+  if(alos){
+    document.getElementById('dash-alos').textContent = `${alos.avgDays.toFixed(1)} วัน`;
+    document.getElementById('dash-alos-sub').textContent = `จากคู่ Admit–Discharge ที่จับคู่ได้ ${alos.n} ราย`;
+  } else {
+    document.getElementById('dash-alos').textContent = "-";
+    document.getElementById('dash-alos-sub').textContent = dashboardMode === "real"
+      ? "ยังไม่มีคู่ Admit–Discharge ของผู้ป่วยรายเดียวกัน"
+      : "ไม่มีข้อมูลเพียงพอในชุดจำลอง";
+  }
+
+  const stats = dashboardMode === "real" ? firestoreStatsCache : mockStats;
+  const days = Object.keys(stats);
+  const totalDischarge = days.reduce((sum,k)=> sum + (stats[k].discharge || 0), 0);
+  if(days.length > 0 && beds.length > 0){
+    const turnover = totalDischarge / beds.length;
+    document.getElementById('dash-turnover').textContent = turnover.toFixed(2);
+    document.getElementById('dash-turnover-sub').textContent = `${totalDischarge} discharge ÷ ${beds.length} เตียง ในช่วง ${days.length} วันที่บันทึก`;
+  } else {
+    document.getElementById('dash-turnover').textContent = "-";
+    document.getElementById('dash-turnover-sub').textContent = "ยังไม่มีข้อมูลบันทึกไว้";
+  }
+}
 function renderDashboard(){
   const stats = dashboardMode === "real" ? firestoreStatsCache : mockStats;
   const today = dashboardMode === "real" ? todayKey() : "2026-09-11";
@@ -1080,6 +1268,8 @@ function renderDashboard(){
   document.getElementById('dash-total-discharge').textContent = totalDischarge;
   document.getElementById('dash-range-label').textContent =
     days.length > 0 ? `บันทึกไว้ทั้งหมด ${days.length} วัน` : "ยังไม่มีข้อมูลบันทึกไว้";
+
+  renderBedMetrics();
 
   const chart = document.getElementById('dash-chart');
   chart.innerHTML = "";
