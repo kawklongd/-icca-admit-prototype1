@@ -126,6 +126,19 @@
   .hl7row{display:flex;gap:8px;margin-top:8px;}
   .hl7row .btn{flex:1;font-size:12px;padding:8px 10px;}
 
+  .kpigrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px;}
+  .kpicard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:9px;}
+  .kpicard .kpi-head{display:flex;align-items:center;gap:8px;}
+  .kpicard .kpi-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+  .kpicard .kpi-label{font-size:10.5px;font-weight:700;color:var(--ink-soft);letter-spacing:.03em;}
+  .kpicard .kpi-value{font-size:25px;font-weight:700;color:var(--ink);line-height:1;}
+  .kpicard .kpi-sub{font-size:11px;color:var(--ink-soft);}
+  .donut-wrap{display:flex;align-items:center;gap:18px;}
+  .donut{width:104px;height:104px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .donut-hole{width:62px;height:62px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .donut-hole .n{font-size:16px;font-weight:700;color:var(--ink);}
+  .donut-hole .l{font-size:9px;color:var(--ink-soft);}
+
   .legend{display:flex;gap:12px;font-size:11px;color:var(--ink-soft);flex-wrap:wrap;}
   .legend span{display:flex;align-items:center;gap:5px;}
   .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
@@ -407,57 +420,42 @@
     </div>
     <div class="flowline" id="dash-mode-note" style="margin:0 0 18px;"></div>
 
-    <div class="grid2" style="grid-template-columns:1fr 1fr;">
-      <div class="card" style="background:#fff;">
-        <h2>วันนี้</h2>
-        <p class="sub" id="dash-today-date">-</p>
-        <div style="display:flex;gap:24px;margin-top:8px;">
-          <div>
-            <div style="font-size:26px;font-weight:700;color:var(--teal-600);" id="dash-today-admit">0</div>
-            <div style="font-size:12px;color:var(--ink-soft);">Admit วันนี้</div>
-          </div>
-          <div>
-            <div style="font-size:26px;font-weight:700;color:var(--coral);" id="dash-today-discharge">0</div>
-            <div style="font-size:12px;color:var(--ink-soft);">Discharge วันนี้</div>
-          </div>
-        </div>
+    <p class="sub" id="dash-range-label" style="margin:0 0 10px;">-</p>
+    <div class="kpigrid" id="dash-kpigrid">
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--teal-100);">🟢</div><span class="kpi-label">ADMIT วันนี้</span></div>
+        <div class="kpi-value" id="dash-today-admit" style="color:var(--teal-600);">0</div>
+        <div class="kpi-sub" id="dash-today-date">-</div>
       </div>
-      <div class="card" style="background:#fff;">
-        <h2>รวมทั้งหมดที่บันทึกไว้</h2>
-        <p class="sub" id="dash-range-label">-</p>
-        <div style="display:flex;gap:24px;margin-top:8px;">
-          <div>
-            <div style="font-size:26px;font-weight:700;color:var(--teal-600);" id="dash-total-admit">0</div>
-            <div style="font-size:12px;color:var(--ink-soft);">Admit รวม</div>
-          </div>
-          <div>
-            <div style="font-size:26px;font-weight:700;color:var(--coral);" id="dash-total-discharge">0</div>
-            <div style="font-size:12px;color:var(--ink-soft);">Discharge รวม</div>
-          </div>
-        </div>
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--coral-100);">🔶</div><span class="kpi-label">DISCHARGE วันนี้</span></div>
+        <div class="kpi-value" id="dash-today-discharge" style="color:var(--coral);">0</div>
+        <div class="kpi-sub">จากวันนี้</div>
       </div>
-    </div>
-
-    <h2 style="font-size:13px;font-weight:600;margin:22px 0 4px;">ตัวชี้วัดการใช้เตียง (Bed Utilization)</h2>
-    <p class="sub" style="margin:0 0 12px;">คำนวณจากสถานะเตียงปัจจุบันและสถิติ Admit/Discharge ที่บันทึกไว้</p>
-    <div class="grid2" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:22px;">
-      <div class="card" style="background:#fff;">
-        <h2 style="font-size:12px;">อัตราการครองเตียง</h2>
-        <p class="sub">Occupancy Rate</p>
-        <div style="font-size:24px;font-weight:700;color:var(--blue);margin-top:4px;" id="dash-occupancy-rate">-</div>
-        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;" id="dash-occupancy-sub">-</div>
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--teal-100);">📥</div><span class="kpi-label">ADMIT รวม</span></div>
+        <div class="kpi-value" id="dash-total-admit" style="color:var(--teal-600);">0</div>
+        <div class="kpi-sub">ที่บันทึกไว้ทั้งหมด</div>
       </div>
-      <div class="card" style="background:#fff;">
-        <h2 style="font-size:12px;">ระยะเวลาพักรักษาเฉลี่ย</h2>
-        <p class="sub">Average Length of Stay</p>
-        <div style="font-size:24px;font-weight:700;color:var(--teal-600);margin-top:4px;" id="dash-alos">-</div>
-        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;" id="dash-alos-sub">-</div>
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--coral-100);">📤</div><span class="kpi-label">DISCHARGE รวม</span></div>
+        <div class="kpi-value" id="dash-total-discharge" style="color:var(--coral);">0</div>
+        <div class="kpi-sub">ที่บันทึกไว้ทั้งหมด</div>
       </div>
-      <div class="card" style="background:#fff;">
-        <h2 style="font-size:12px;">อัตราการหมุนเวียนเตียง</h2>
-        <p class="sub">Bed Turnover Rate</p>
-        <div style="font-size:24px;font-weight:700;color:var(--coral);margin-top:4px;" id="dash-turnover">-</div>
-        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;" id="dash-turnover-sub">-</div>
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--blue-100);">🛏️</div><span class="kpi-label">OCCUPANCY RATE</span></div>
+        <div class="kpi-value" id="dash-occupancy-rate" style="color:var(--blue);">-</div>
+        <div class="kpi-sub" id="dash-occupancy-sub">-</div>
+      </div>
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--teal-100);">⏱️</div><span class="kpi-label">AVERAGE LOS</span></div>
+        <div class="kpi-value" id="dash-alos" style="color:var(--teal-600);">-</div>
+        <div class="kpi-sub" id="dash-alos-sub">-</div>
+      </div>
+      <div class="kpicard">
+        <div class="kpi-head"><div class="kpi-icon" style="background:var(--coral-100);">🔁</div><span class="kpi-label">BED TURNOVER</span></div>
+        <div class="kpi-value" id="dash-turnover" style="color:var(--coral);">-</div>
+        <div class="kpi-sub" id="dash-turnover-sub">-</div>
       </div>
     </div>
 
@@ -469,13 +467,23 @@
     <p class="sub" id="dash-demo-total" style="margin:0 0 14px;">จากข้อมูลผู้ป่วยที่ Admit แล้วทั้งหมด 0 คน</p>
 
     <div class="grid2" style="grid-template-columns:1fr 1fr;">
-      <div>
-        <p class="sub" style="margin:0 0 6px;font-weight:600;color:var(--ink);">สัดส่วนเพศ</p>
-        <div id="dash-gender"></div>
+      <div class="card" style="background:#fff;">
+        <p class="sub" style="margin:0 0 10px;font-weight:600;color:var(--ink);">สัดส่วนเพศ (Gender)</p>
+        <div class="donut-wrap">
+          <div class="donut" id="dash-gender-donut">
+            <div class="donut-hole"><div class="n" id="dash-gender-total">0</div><div class="l">ทั้งหมด</div></div>
+          </div>
+          <div id="dash-gender" style="flex:1;display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
       </div>
-      <div>
-        <p class="sub" style="margin:0 0 6px;font-weight:600;color:var(--ink);">สัดส่วนช่วงอายุ</p>
-        <div id="dash-agegroup"></div>
+      <div class="card" style="background:#fff;">
+        <p class="sub" style="margin:0 0 10px;font-weight:600;color:var(--ink);">สัดส่วนช่วงอายุ</p>
+        <div class="donut-wrap">
+          <div class="donut" id="dash-agegroup-donut">
+            <div class="donut-hole"><div class="n" id="dash-agegroup-total">0</div><div class="l">ทั้งหมด</div></div>
+          </div>
+          <div id="dash-agegroup" style="flex:1;display:flex;flex-direction:column;gap:7px;"></div>
+        </div>
       </div>
     </div>
 
@@ -1118,6 +1126,38 @@ function subscribePatients(){
     }
   );
 }
+function buildConicGradient(items){
+  const total = items.reduce((s,i)=>s+i.value,0) || 1;
+  let acc = 0;
+  const stops = items.map(i=>{
+    const start = (acc/total)*360;
+    acc += i.value;
+    const end = (acc/total)*360;
+    return `${i.color} ${start}deg ${end}deg`;
+  });
+  return `conic-gradient(${stops.join(',')})`;
+}
+function renderDonutLegend(containerId, donutId, totalId, items){
+  const total = items.reduce((s,i)=>s+i.value,0);
+  document.getElementById(totalId).textContent = total;
+  document.getElementById(donutId).style.background = total > 0 ? buildConicGradient(items) : "var(--line)";
+  const box = document.getElementById(containerId);
+  box.innerHTML = "";
+  if(total === 0){
+    box.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
+    return;
+  }
+  items.forEach(it=>{
+    const row = document.createElement('div');
+    row.style.cssText = "display:flex;align-items:center;gap:8px;";
+    row.innerHTML = `
+      <div style="width:10px;height:10px;border-radius:3px;background:${it.color};flex-shrink:0;"></div>
+      <span style="font-size:13px;color:var(--ink);flex:1;">${it.label}</span>
+      <span style="font-size:13px;font-weight:700;color:var(--ink);">${it.value} คน</span>
+    `;
+    box.appendChild(row);
+  });
+}
 function renderSimpleBars(containerId, items, color){
   const box = document.getElementById(containerId);
   box.innerHTML = "";
@@ -1144,17 +1184,19 @@ function renderDemographics(){
 
   const male = patients.filter(p => p.gender === "M").length;
   const female = patients.filter(p => p.gender === "F").length;
-  renderSimpleBars('dash-gender', [
-    { label: "ชาย", value: male },
-    { label: "หญิง", value: female },
-  ], "var(--blue)");
+  renderDonutLegend('dash-gender', 'dash-gender-donut', 'dash-gender-total', [
+    { label: "ชาย (Male)", value: male, color: "#185fa5" },
+    { label: "หญิง (Female)", value: female, color: "#e3528c" },
+  ]);
 
+  const ageGroupColors = { "0-18 ปี": "#10b981", "19-40 ปี": "#185fa5", "41-60 ปี": "#f0a73d", "61 ปีขึ้นไป": "#8b5cf6" };
   const groups = ["0-18 ปี", "19-40 ปี", "41-60 ปี", "61 ปีขึ้นไป"];
   const ageItems = groups.map(g => ({
     label: g,
     value: patients.filter(p => ageGroupOf(p.age) === g).length,
+    color: ageGroupColors[g],
   }));
-  renderSimpleBars('dash-agegroup', ageItems, "var(--teal)");
+  renderDonutLegend('dash-agegroup', 'dash-agegroup-donut', 'dash-agegroup-total', ageItems);
 
   const diagCount = {};
   patients.forEach(p => {
